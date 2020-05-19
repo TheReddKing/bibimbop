@@ -49,7 +49,7 @@ def convert(sentence):
                     continue
                 if (key.startswith(word)):
                     if (bestop is None or len(translate_dict[key]) - (j - i) < lenj):
-                        bestop, jj,lenj = translate_dict[key], j, len(key) + j-i
+                        bestop, jj, lenj = translate_dict[key], j, len(key) - (j - i)
                     found = True
             if (found):
                 break
@@ -58,9 +58,8 @@ def convert(sentence):
             i += 1
         else:
             final_sentence += " " + bestop
-            i = j
-
-        
+            print(sentence[i:jj])
+            i = jj      
     return final_sentence
 
 if __name__ == "__main__":
