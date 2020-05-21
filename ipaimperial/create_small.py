@@ -6,7 +6,7 @@ import eng_to_ipa as ipa
 
 
 def load_words():
-    with open('data/dictionary_2.txt') as word_file:
+    with open('data/dictionary_small.txt') as word_file:
         valid_words = set(word_file.read().split())
 
     return valid_words
@@ -20,11 +20,8 @@ if __name__ == '__main__':
         "Prepare for the worst. The quick brown fox jumped over the lazy dog."))
 
     translate_dict = {}
-    out = [open(f'data/transl_twice_{i}.txt', "w") for i in range(1, 4)]
+    out = [open(f'data/transl_small_{i}.txt', "w") for i in range(1, 4)]
     for word in english_words:
-        word = ''.join(ch for ch in word.lower() if ch.isalpha())
-        if len(word) == 0:
-            continue
         syllable_count = ipa.syllable_count(word)
         if (syllable_count > 3):
             continue

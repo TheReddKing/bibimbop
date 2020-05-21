@@ -23,7 +23,7 @@ def simplifyipa(sentence):
 
 
 def load_english():
-    out = [open(f'data/transl_{i}.txt', "r") for i in range(1, 4)]
+    out = [open(f'data/transl_small_{i}.txt', "r") for i in range(1, 4)]
     sylla = []
     for o in out:
         translate_dict = {}
@@ -41,6 +41,11 @@ def sentence_similarity_1(word, key):
     # comparing word to key
     pass
 
+def all_consonent(word):
+    for w in word:
+        if w in vowel_split:
+            return False
+    return True
 def is_consonent(char):
     p2 = char
     return p2 not in vowel_split
@@ -66,6 +71,11 @@ def isolate_syllables(sentence):
                 phrases[j] = ""
                 j += 1
                 continue
+            if (all_consonent(p2)):
+                phrases[i] += phrases[j]
+                phrases[j] = ""
+                j += 1
+                continue
             if (len(p2) > 2):
                 if (is_consonent(p2[0]) and is_consonent(p2[1])):
                     subs = 2 if phrases[j][0] == 's' else 1
@@ -78,13 +88,16 @@ def isolate_syllables(sentence):
     return full_sentence
 
 def characters_contained(word, key):
+    forgiveness = 0 #1 gives one key to be wrong
     for i in range(len(word)):
         try:
             l = key.index(word[i])
+            key = key[l+1:]
         except:
-            return False
-        key = key[l+1:]
-    return True
+            forgiveness -= 1
+            if (forgiveness < 0):
+                return -1
+    return forgiveness
         
 def convert(sentence):
     sentence = simplifyipa(sentence)
@@ -96,7 +109,8 @@ def convert(sentence):
     # translate_dict = {**sylla[0], **sylla[1]}
     while i < len(syllables):
         found = False
-        for numsylla in range(2,-1,-1):
+        options = []
+        for numsylla in range(0,-1,-1):
             # one and 2
             translate_dict = sylla[numsylla]
             if i + numsylla >= len(syllables):
@@ -106,11 +120,15 @@ def convert(sentence):
                 continue
             bestop, jj, lenj = None, None, 0
             for key in translate_dict.keys():
-                if (bestop is not None and lenj < len(translate_dict[key])):
-                    continue
-                if (key.startswith(word[:1]) and characters_contained(word,key) and random.randint(0,10) < 4):
+                # if (bestop is not None and lenj < len(translate_dict[key])):
+                #     continue
+                # if (key.startswith(word[:1]) and characters_contained(word,key)):
+                # if ((key[0] == word[0]) and characters_contained(word,key)):
+                c = characters_contained(word,key)
+                if (c > -1):
                     if (bestop is None or len(translate_dict[key]) < lenj):
                         bestop, jj, lenj = translate_dict[key], numsylla, len(key)
+                    options.append((translate_dict[key], numsylla, c, key))
                     found = True
             if (found):
                 break
@@ -118,8 +136,11 @@ def convert(sentence):
             final_sentence += " " + syllables[i]
             i += 1
         else:
-            final_sentence += " " + bestop
-            print(syllables[i:i+numsylla + 1],bestop)
+            if random.randint(1,4) < 4:
+                final_sentence += " " + options[random.randint(0, len(options)-1)][0]
+            else:
+                final_sentence += " " + bestop
+            print(syllables[i:i+numsylla + 1], options[:5])
             i += numsylla + 1
     return final_sentence
 
@@ -158,11 +179,27 @@ def convert_old(sentence):
     return final_sentence
 
 if __name__ == "__main__":
-    vals = 'neka malɯl not̚nɯn kʌt̚to . nʌɰi tɕak̚ɯn maltʰuto . nap͈ɯtɕi anɯnkʌl'
-    # vals += ' malʌpi sonɯl tɕap̚ko . tɕokɯmɯn nolɾɛto . siltɕika anɯnkʌl'
-    # vals += ' mulkamtɕʰʌɾʌm pʰaɾat̚tʌn . hanɯlɯn pʌls͈ʌ k͈amat̚ko . kamtɕʌŋɯn tʌ kiᇁʌtɕjʌ \n'
+    vals = 'neka malɯl not̚nɯn kʌt̚to . nʌɰi tɕak̚ɯn maltʰuto . nap͈ɯtɕi anɯnkʌl ... '
+    vals += ' malʌpi sonɯl tɕap̚ko . tɕokɯmɯn nolɾɛto . siltɕika anɯnkʌl ...'
+    vals += ' mulkamtɕʰʌɾʌm pʰaɾat̚tʌn . hanɯlɯn pʌls͈ʌ k͈amat̚ko . kamtɕʌŋɯn tʌ kiᇁʌtɕjʌ ...'
     # vals += 'uɾi tulman nɯk͈jʌtɕinɯn isaŋhan nɯk͈im . nato nʌmu tɕot̚a'
     # vals += 'asywʌ pʌls͈ʌ si ʌt͈ʌk̚hɛ pʌls͈ʌ sine ponɛtɕuki silɯnkʌl alko it̚ʌ '
     # vals = "θɪs ɪs eɪ test sentns"
+    # vals = "haɪ, iːvrɪbodɪ. eɪnijah, θank jou fɒr θat beajutaɪfʌl intrəʊdukʃɒn. aɪ koəɫd nɒt biː projudɛr ɒf iːvrɪθɪng joju’v dəʊn ɪn joʌr taɪm wiθ θiː əʊbeɪmeɪ foundeɪʃɒn."
+    # vals = "op͈an kaŋnam sɯtʰail"
+    # vals += "kaŋnam sɯtʰail . "
+    # vals += "nat̚enɯn t͈asaɾoun inkantɕʌk̚in jʌtɕa . "
+    # vals += "kʰʌpʰi hantɕanɰi jʌjuɾɯl anɯn, pʰumkjʌk̚ it̚nɯn jʌtɕa . "
+    # vals += "pami omjʌn simtɕaŋi t͈ɯkʌwʌtɕinɯn jʌtɕa . "
+    # vals += "kɯɾʌn pantɕʌn it̚nɯn jʌtɕa . "
+    # vals += "nanɯn sanai . "
+    # vals += "nat̚enɯn nʌmankʰɯm t͈asaɾoun kɯɾʌn sanai . "
+    # vals += "kʰʌpʰi sik̚kito tɕʌne wʌnsjat̚ t͈ɛɾinɯn sanai . "
+    # vals += "pami omjʌn simtɕaŋi tʰʌtɕjʌ pʌɾinɯn sanai . "
+    # vals += "kɯɾʌn sanai . "
+    # vals = "peɪreɪ saɪt"
+    vals = "newspeɪpɛr riːport"
+    vals = "diːs aɪmal numbɛr"
+    vals = "eɪreeɪ ɒf eɪ peɪrɔɫliːlogram"
     print(vals)
     print(convert(vals))

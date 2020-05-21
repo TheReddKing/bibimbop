@@ -1,5 +1,7 @@
+l ɫ
 a æ ɶ ä ɛ œ ɜ ɞ ɐ ɑ ɒ aː ɛː
-i y ɨ ʉ ɪ ʏ e ø ɘ ɵ eː iː øː yː
+i y ɨ ʉ ø ɘ ɵ eː iː øː yː ə
+e ɪ ʏ
 o ɯ u ʊ ɤ ʌ ɔ oː uː əː ɯː ɰ
 h ɦ
 k kʰ k͈ k̚
@@ -9,3 +11,4 @@ s s s͈ z ʑ
 t t͈ tʰ t̚
 j ts ts͈ tɕ tɕ͈ tɕʰ jʰ
 ch tsʰ
+ng ŋ
